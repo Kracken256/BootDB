@@ -8,10 +8,6 @@ store more then 512 bytes of the protocol per record.
 #ifndef __DECENT_MC_BOOTDB__
 #define __DECENT_MC_BOOTDB__
 
-#include <cstdio>
-#include <iostream>
-#include <string>
-#include <memory>
 #include <cstring>
 #include <fstream>
 #include <chrono>
@@ -23,22 +19,6 @@ store more then 512 bytes of the protocol per record.
 
 namespace BootDB
 {
-    uint64_t GetTime()
-    {
-        return (uint64_t)(std::chrono::duration_cast<std::chrono::milliseconds>(
-                              std::chrono::system_clock::now().time_since_epoch())
-                              .count());
-    }
-    std::string create_rand_bytes(int size)
-    {
-        std::string pt;
-        std::mt19937_64 gen(GetTime());
-        for (int i = 0; i < size; i++)
-        {
-            pt = pt + (char)((gen()) % 256);
-        }
-        return pt;
-    }
     struct DatabaseHeader
     {
         const char magic_bytes[4] = {0x38, 0x53, 0x3f, 0x4f}; //  May change for production.
@@ -215,6 +195,22 @@ namespace BootDB
         static LocalDatabase *instance;
         static std::fstream *_database;
         static std::string FilePath;
+        static uint64_t GetTime()
+        {
+            return (uint64_t)(std::chrono::duration_cast<std::chrono::milliseconds>(
+                                  std::chrono::system_clock::now().time_since_epoch())
+                                  .count());
+        }
+        static std::string create_rand_bytes(int size)
+        {
+            std::string pt;
+            std::mt19937_64 gen(GetTime());
+            for (int i = 0; i < size; i++)
+            {
+                pt = pt + (char)((gen()) % 256);
+            }
+            return pt;
+        }
         LocalDatabase()
         {
         } // Size of struct is 632 bytes
